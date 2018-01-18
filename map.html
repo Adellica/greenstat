@@ -18,10 +18,11 @@
          var listeners = {};
          var getset = function (newValue) {
              if(typeof newValue !== 'undefined') {
-                 for(var key in listeners) {
-                     (listeners[key])(value, newValue);
-                 }
+                 var oldValue = value;
                  value = newValue;
+                 for(var key in listeners) {
+                     (listeners[key])(oldValue, newValue);
+                 }
              }
              return value;
          };
