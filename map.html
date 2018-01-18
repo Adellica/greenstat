@@ -16,7 +16,7 @@
      window.createAtom = function(initial) {
          var value = initial;
          var listeners = {};
-         getset = function (newValue) {
+         var getset = function (newValue) {
              if(typeof newValue !== 'undefined') {
                  for(var key in listeners) {
                      (listeners[key])(value, newValue);
