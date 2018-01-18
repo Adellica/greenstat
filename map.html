@@ -81,7 +81,7 @@
           </table>
           <div>Strekningslengde (km):
             <div>
-              <input type="text" id="distance-total">
+              <input type="text" id="distance">
             </div>
           </div>
         </div>
@@ -91,10 +91,10 @@
     <script>
 
      Distance = createAtom('');
-     Distance.listener('#distance-total', function(ol, nw) {
-         document.getElementById('distance-total').value = (typeof nw === 'number') ? Math.round(nw) : nw;
+     Distance.listener('#distance', function(ol, nw) {
+         document.getElementById('distance').value = (typeof nw === 'number') ? Math.round(nw) : nw;
      });
-     document.getElementById('distance-total')
+     document.getElementById('distance')
              .addEventListener('change', function(x) {
                  console.log('updating Distance', x);
                  Distance(x.target.value);
