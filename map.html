@@ -129,39 +129,17 @@
 
      function initMap() {
 
-         var pos = new google.maps.LatLng({lat: 66.8180072997799, lng: 13.951091766357422});
+         var origin = new google.maps.LatLng({lat: 66.818007299, lng: 13.9510917663}); // Glomfjord
+         var dest   = new google.maps.LatLng({lat: 66.988109162, lng: 14.1860961914}); // Bodø lufthavn
 
          var map = new google.maps.Map(document.getElementById('map'), {
              zoom: 7,
-             center: pos,
+             center: origin,
              mapTypeId: 'roadmap',
              scaleControl: true,
              mapTypeControl: false, // leave room for our map-overlay
              clickableIcons: false, // remove "landmark" click popup
          });
-
-         var marker = new google.maps.Marker({
-             map: map,
-             position: pos,
-             title: 'nothing',
-         });
-
-         var createCircle = function (km) {
-             var gradient = Math.floor(255 * Math.min(km / 200.0, 1));
-             var gradientHex = Number(gradient).toString(16);
-             gradientHex = gradientHex.length <= 1 ? '0' + gradientHex : gradientHex;
-             var color = '#0000' + gradientHex;
-             console.log('color', color);
-             return new google.maps.Circle({
-                 map: map,
-                 center: marker.getPosition(),
-                 radius: km * 1000,
-                 fillOpacity: 0.0,
-                 strokeColor: color,
-                 clickable: false,
-             });
-         }
-
 
          var service = new google.maps.DirectionsService;
          var display = new google.maps.DirectionsRenderer({
@@ -173,8 +151,7 @@
              Distance(routeDistance(display.getDirections()));
              console.log('updating distance: ', Distance());
          });
-         function doRoute(dest) {
-             let origin = marker.getPosition();
+         function doRoute(origin, dest) {
              service.route({
                  origin: origin,
                  destination: dest,
@@ -191,28 +168,21 @@
                  }
              });
          }
-
-         var cs = [50, 100, 150, 200].map(createCircle);
-
-         var dest = new google.maps.LatLng({lat: 66.00350152329793, lng: 13.436279296875});
+         doRoute(origin, dest);
 
          map.addListener('click', function(evt) {
-             console.log('click', evt, 'marker', marker);
-             //marker.setPosition(evt.latLng);
-             cs.forEach(function(circle) {
-                 //circle.setCenter(marker.getPosition());
-             });
-
-             dest = evt.latLng;
-             doRoute(dest);
+             dest.lat = evt.latLng.lat;
+             dest.lng = evt.latLng.lng;
+             console.log('clicked map', 'from', origin, 'to', dest);
+             doRoute(origin, dest);
          });
 
-
-
          // export for poor man's repl
-         window.marker = marker;
          window.map = map;
-         window.cs = cs;
+         window.origin = origin;
+         window.dest = dest;
+         window.service = service;
+         window.display = display;
      }
 
     </script>
