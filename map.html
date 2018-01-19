@@ -28,6 +28,7 @@
          };
          getset.listener = function(key, fnc) {
              listeners[key] = fnc;
+             (listeners[key])(value, value);
          }
          return getset;
      };
@@ -97,7 +98,6 @@
                  console.log('updating Prodcost', x);
                  Prodcost(parseFloat(x.target.value));
              });
-     Prodcost(20); // TODO: auto init listeners
 
      Distance = createAtom('');
      Distance.listener('#distance', function(ol, nw) {
