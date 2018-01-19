@@ -174,8 +174,9 @@
              console.log('updating distance: ', Distance());
          });
          function doRoute(dest) {
+             let origin = marker.getPosition();
              service.route({
-                 origin: marker.getPosition(),
+                 origin: origin,
                  destination: dest,
                  travelMode: 'DRIVING',
                  avoidTolls: false, // TODO parameterize this
@@ -184,7 +185,7 @@
                      console.log(response);
                      display.setDirections(response);
                  } else if(status === 'ZERO_RESULTS') {
-
+                     console.error('no route found between', origin, dest);
                  } else {
                      console.error('Could not display directions due to ', status);
                  }
