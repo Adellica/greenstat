@@ -70,6 +70,10 @@
         <div>
           <input type="text" style="width: 128px;" id="prodcost" />
         </div>
+        <div>Transkost (kr/km H₂)</div>
+        <div>
+          <input type="text" style="width: 128px;" id="transcost" />
+        </div>
         <div>Strekningslengde (km):
           <div>
             <input type="text" id="distance">
@@ -99,6 +103,16 @@
                  Prodcost(parseFloat(x.target.value));
              });
 
+     Transcost = createAtom(20); // NOK/km
+     Transcost.listener('#transcost', function(ol, nw) {
+         document.getElementById('transcost').value = nw;
+     });
+     document.getElementById('transcost')
+             .addEventListener('change', function(x) {
+                 console.log('updating Transcost', x);
+                 Transcost(parseFloat(x.target.value));
+             });
+
      Distance = createAtom('');
      Distance.listener('#distance', function(ol, nw) {
          document.getElementById('distance').value = (typeof nw === 'number') ? Math.round(nw) : nw;
@@ -110,13 +124,16 @@
              });
 
      function updateTable() {
-         console.log('updating table against', Distance(), 'and', Prodcost());
+         console.log('updating table against',
+                     'Prodcost', Prodcost(),
+                     'Transcost', Transcost(),
+                     'Distance', Distance());
          var dists = [500, 1000, 1500, 2000];
          dists.forEach(function(dist) {
              var id = 'prpkg' + dist;
              var el = document.getElementById(id);
              if(el) {
-                 el.innerHTML = (Prodcost() * Distance() / dist).toFixed(2);
+                 el.innerHTML = ((Prodcost() * Transcost() * Distance()) / dist).toFixed(2);
              } else {
                  console.error('cannot find element #' + id);
              }
@@ -124,6 +141,7 @@
      }
 
      Prodcost.listener('table', updateTable);
+     Transcost.listener('table', updateTable);
      Distance.listener('table', updateTable);
      updateTable();
 
