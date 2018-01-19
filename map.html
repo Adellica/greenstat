@@ -169,6 +169,10 @@
              map: map,
              preserveViewport: true,
          });
+         display.addListener('directions_changed', function() {
+             Distance(routeDistance(display.getDirections()));
+             console.log('updating distance: ', Distance());
+         });
          function doRoute(dest) {
              service.route({
                  origin: marker.getPosition(),
@@ -179,8 +183,6 @@
                  if (status === 'OK') {
                      console.log(response);
                      display.setDirections(response);
-                     Distance(routeDistance(response));
-                     console.log('avstand: ', Distance());
                  } else if(status === 'ZERO_RESULTS') {
 
                  } else {
