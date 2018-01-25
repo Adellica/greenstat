@@ -21,7 +21,7 @@
                  var oldValue = value;
                  value = newValue;
                  for(var key in listeners) {
-                     (listeners[key])(oldValue, newValue);
+                     (listeners[key])(newValue, oldValue);
                  }
              }
              return value;
@@ -90,7 +90,7 @@
     <script>
 
      Transcost = createAtom(20); // NOK/km
-     Transcost.listener('#transcost', function(ol, nw) {
+     Transcost.listener('#transcost', function(nw, ol) {
          document.getElementById('transcost').value = nw;
      });
      document.getElementById('transcost')
@@ -100,7 +100,7 @@
              });
 
      Distance = createAtom('');
-     Distance.listener('#distance', function(ol, nw) {
+     Distance.listener('#distance', function(nw, ol) {
          document.getElementById('distance').value = (typeof nw === 'number') ? Math.round(nw) : nw;
      });
      document.getElementById('distance')
