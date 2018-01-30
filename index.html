@@ -90,16 +90,21 @@
           </a>
         </div>
 
-        <div>Fra</div>
+        <div>A</div>
         <div>
-          <input type="text" style="width: 128px;" id="pac-from" />
+          <input type="text" style="width: 128px;" id="pac-A" />
         </div>
 
-        <div>Til</div>
+        <div>B</div>
         <div>
-          <input type="text" style="width: 128px;" id="pac-to" />
+          <input type="text" style="width: 128px;" id="pac-B" />
         </div>
 
+        <div>AB (km):
+          <div>
+            <input type="text" id="distanceAB">
+          </div>
+        </div>
         <div>Salgspris (kr H₂)</div>
         <div>
           <input type="text" style="width: 128px;" id="saleprice" />
@@ -108,11 +113,7 @@
         <div>
           <input type="text" style="width: 128px;" id="transcost" />
         </div>
-        <div>Strekningslengde (km):
-          <div>
-            <input type="text" id="distance">
-          </div>
-        </div>
+
         <table>
           <tbody>
             <tr><th>Last</th><th>kr/kg</th></tr>
@@ -129,25 +130,25 @@
 
      Saleprice = createFloatInputAtom('saleprice', 20); // NOK H₂
      Transcost = createFloatInputAtom('transcost', 20);
-     Distance = createFloatInputAtom('distance', 20);
+     DistanceAB = createFloatInputAtom('distanceAB', 20);
 
      function updateTable() {
          console.log('updating table against',
                      'Transcost', Transcost(),
-                     'Distance', Distance());
+                     'Distance', DistanceAB());
          var dists = [500, 1000, 1500, 2000];
          dists.forEach(function(dist) {
              var id = 'prpkg' + dist;
              var el = document.getElementById(id);
              if(el) {
-                 el.innerHTML = ((Transcost() * Distance()) / dist).toFixed(2);
+                 el.innerHTML = ((Transcost() * DistanceAB()) / dist).toFixed(2);
              } else {
                  console.error('cannot find element #' + id);
              }
 
              el = document.getElementById('kp' + dist);
              if(el) {
-                 el.innerHTML = (((Transcost() * Distance()) / dist) + Saleprice()).toFixed(2);
+                 el.innerHTML = (((Transcost() * DistanceAB()) / dist) + Saleprice()).toFixed(2);
              } else {
                  console.error('cannot find element #' + id);
              }
@@ -156,17 +157,17 @@
 
      Saleprice.listener('table', updateTable);
      Transcost.listener('table', updateTable);
-     Distance.listener('table', updateTable);
+     DistanceAB.listener('table', updateTable);
      updateTable();
 
      function initMap() {
 
-         var Origin = createAtom(new google.maps.LatLng({lat: 66.818007299, lng: 13.9510917663})); // Glomfjord
-         var Dest   = createAtom(new google.maps.LatLng({lat: 66.988109162, lng: 14.1860961914})); // Bodø lufthavn
+         var A = createAtom(new google.maps.LatLng({lat: 66.818007299, lng: 13.9510917663})); // Glomfjord
+         var B = createAtom(new google.maps.LatLng({lat: 66.988109162, lng: 14.1860961914})); // Bodø lufthavn
 
          var map = new google.maps.Map(document.getElementById('map'), {
              zoom: 7,
-             center: Origin(),
+             center: A(),
              mapTypeId: 'roadmap',
              scaleControl: true,
              mapTypeControl: false, // leave room for our map-overlay
@@ -180,14 +181,14 @@
              preserveViewport: true,
          });
          display.addListener('directions_changed', function() {
-             Distance(routeDistance(display.getDirections()));
-             console.log('updating distance: ', Distance());
+             DistanceAB(routeDistance(display.getDirections()));
+             console.log('updating distance AB: ', DistanceAB());
          });
 
          redoRoute = function() {
              service.route({
-                 origin: Origin(),
-                 destination: Dest(),
+                 origin: A(),
+                 destination: B(),
                  travelMode: 'DRIVING',
                  avoidTolls: false, // TODO parameterize this
              }, function(response, status) {
@@ -195,14 +196,14 @@
                      console.log('service.route response=', response);
                      display.setDirections(response);
                  } else if(status === 'ZERO_RESULTS') {
-                     console.error('no route found between', Origin(), Dest());
+                     console.error('no route found between', A(), B());
                  } else {
                      console.error('Could not display directions due to ', status);
                  }
              });
          }
-         Origin.listener('route', redoRoute);
-         Dest.listener('route', redoRoute);
+         A.listener('route', redoRoute);
+         B.listener('route', redoRoute);
 
          var createAutocomplete = function(id, Atom) {
              var pac = document.getElementById(id);
@@ -214,13 +215,13 @@
                  }
              });
          };
-         createAutocomplete('pac-from', Origin);
-         createAutocomplete('pac-to',   Dest);
+         createAutocomplete('pac-A', A);
+         createAutocomplete('pac-B', B);
 
          // export for poor man's repl
          window.map = map;
-         window.Origin = Origin;
-         window.Dest = Dest;
+         window.A = A;
+         window.B = B;
          window.service = service;
          window.display = display;
      }
