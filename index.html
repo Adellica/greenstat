@@ -192,7 +192,7 @@
                  avoidTolls: false, // TODO parameterize this
              }, function(response, status) {
                  if (status === 'OK') {
-                     console.log(response);
+                     console.log('service.route response=', response);
                      display.setDirections(response);
                  } else if(status === 'ZERO_RESULTS') {
                      console.error('no route found between', Origin(), Dest());
