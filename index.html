@@ -33,6 +33,26 @@
          return getset;
      };
 
+     var createFloatInputAtom = function(id, value) {
+         var Atom = createAtom(value);
+         Atom.listener('#' + id, function(nv, ov) {
+             var el = document.getElementById(id);
+             if(el) {
+                 el.value = nv;
+             }
+             else {
+                 console.error('cannot find element', id);
+             }
+         });
+         document.getElementById(id).addEventListener('change', function(evt) {
+             if(evt && evt.target) {
+                 Atom(parseFloat(evt.target.value));
+             }
+         });
+         return Atom;
+     };
+
+
      // helper for directions
      // result from service.route(...);
      function routeDistance(result) {
@@ -89,25 +109,8 @@
 
     <script>
 
-     Transcost = createAtom(20); // NOK/km
-     Transcost.listener('#transcost', function(nw, ol) {
-         document.getElementById('transcost').value = nw;
-     });
-     document.getElementById('transcost')
-             .addEventListener('change', function(x) {
-                 console.log('updating Transcost', x);
-                 Transcost(parseFloat(x.target.value));
-             });
-
-     Distance = createAtom('');
-     Distance.listener('#distance', function(nw, ol) {
-         document.getElementById('distance').value = (typeof nw === 'number') ? Math.round(nw) : nw;
-     });
-     document.getElementById('distance')
-             .addEventListener('change', function(x) {
-                 console.log('updating Distance', x);
-                 Distance(x.target.value);
-             });
+     Transcost = createFloatInputAtom('transcost', 20);
+     Distance = createFloatInputAtom('distance', 20);
 
      function updateTable() {
          console.log('updating table against',
