@@ -100,6 +100,10 @@
           <input type="text" style="width: 128px;" id="pac-to" />
         </div>
 
+        <div>Salgspris (kr H₂)</div>
+        <div>
+          <input type="text" style="width: 128px;" id="saleprice" />
+        </div>
         <div>Transkost (kr/km)</div>
         <div>
           <input type="text" style="width: 128px;" id="transcost" />
@@ -112,10 +116,10 @@
         <table>
           <tbody>
             <tr><th>Last</th><th>kr/kg</th></tr>
-            <tr><td> 500</td><td id="prpkg500"></td></tr>
-            <tr><td>1000</td><td id="prpkg1000"></td></tr>
-            <tr><td>1500</td><td id="prpkg1500"></td></tr>
-            <tr><td>2000</td><td id="prpkg2000"></td></tr>
+            <tr><td> 500</td><td id="prpkg500"></td><td id="kp500"></td></tr>
+            <tr><td>1000</td><td id="prpkg1000"></td><td id="kp1000"></td></tr>
+            <tr><td>1500</td><td id="prpkg1500"></td><td id="kp1500"></td></tr>
+            <tr><td>2000</td><td id="prpkg2000"></td><td id="kp2000"></td></tr>
           </tbody>
         </table>
       </div>
@@ -123,6 +127,7 @@
 
     <script>
 
+     Saleprice = createFloatInputAtom('saleprice', 20); // NOK H₂
      Transcost = createFloatInputAtom('transcost', 20);
      Distance = createFloatInputAtom('distance', 20);
 
@@ -139,9 +144,17 @@
              } else {
                  console.error('cannot find element #' + id);
              }
+
+             el = document.getElementById('kp' + dist);
+             if(el) {
+                 el.innerHTML = (((Transcost() * Distance()) / dist) + Saleprice()).toFixed(2);
+             } else {
+                 console.error('cannot find element #' + id);
+             }
          });
      }
 
+     Saleprice.listener('table', updateTable);
      Transcost.listener('table', updateTable);
      Distance.listener('table', updateTable);
      updateTable();
