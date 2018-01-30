@@ -178,13 +178,6 @@
          }
          doRoute(origin, dest);
 
-         map.addListener('click', function(evt) {
-             dest.lat = evt.latLng.lat;
-             dest.lng = evt.latLng.lng;
-             console.log('clicked map', 'from', origin, 'to', dest);
-             doRoute(origin, dest);
-         });
-
          // export for poor man's repl
          window.map = map;
          window.origin = origin;
