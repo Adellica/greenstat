@@ -84,7 +84,7 @@
          input , img {
              width: 128px;
          }
-         table > tbody > tr > td {
+         table.costs > tbody > tr > td {
              font-family: monospace;
              text-align: right;
              background-color: #ffffff80;
@@ -99,6 +99,11 @@
              width: 40px;
              text-align: right;
          }
+         .label {
+             width: 20px;
+             display: inline-block;
+             text-align: right;
+         }
         </style>
         <div style="margin-bottom: 10px;">
           <a href="greenstat.no">
@@ -106,37 +111,47 @@
           </a>
         </div>
 
-        <div>A
-          <input type="text" class="place"    id="pac-A" />
-          <span>km:</span>
-        </div>
+        <table>
+          <tbody>
+            <tr>
+              <td>A</td>
+              <td><input type="text" class="place"    id="pac-A" ></td>
+              </tr>
 
-        <div>B
-          <input type="text" class="place"    id="pac-B" />
-          <input type="text" class="distance" id="distanceAB">
-        </div>
+              <tr>
+                <td>B</td>
+                <td><input type="text" class="place"    id="pac-B" ></td>
+                <td>AB</td>
+                <td><input type="text" class="distance" id="distanceAB"></td>
+                <td>km</td>
+              </tr>
 
-        <div>C
-          <input type="text" class="place"    id="pac-C" />
-          <input type="text" class="distance" id="distanceAC">
-        </div>
+              <tr>
+                <td>C</td>
+                <td><input type="text" class="place"    id="pac-C" ></td>
+                <td>AC</td>
+                <td><input type="text" class="distance" id="distanceAC"></td>
+                <td>km</td>
+              </tr>
+          </tbody>
+        </table>
 
         <div>Salgspris (kr H₂)</div>
         <div>
-          <input type="text" class="distance" id="saleprice" />
+          <input type="text" class="distance" id="saleprice">
         </div>
         <div>Transkost (kr/km)</div>
         <div>
-          <input type="text" class="distance" id="transcost" />
+          <input type="text" class="distance" id="transcost">
         </div>
 
-        <table>
+        <table class="costs">
           <tbody>
-            <tr><th>Last</th><th>kr/kg</th></tr>
-            <tr><td> 500</td><td id="prpkg500"></td><td id="kp500"></td></tr>
-            <tr><td>1000</td><td id="prpkg1000"></td><td id="kp1000"></td></tr>
-            <tr><td>1500</td><td id="prpkg1500"></td><td id="kp1500"></td></tr>
-            <tr><td>2000</td><td id="prpkg2000"></td><td id="kp2000"></td></tr>
+            <tr><th>Last</th><th>AB kr/kg</th>          <th>+SP</th>  <th>AC kr/kg</th> <th>+SP</th></tr>
+            <tr><td> 500</td><td id="prpkg500" ></td><td id="kp500" ></td><td id="ac500" ></td><td id="act500" ></td></tr>
+            <tr><td>1000</td><td id="prpkg1000"></td><td id="kp1000"></td><td id="ac1000"></td><td id="act1000"></td></tr>
+            <tr><td>1500</td><td id="prpkg1500"></td><td id="kp1500"></td><td id="ac1500"></td><td id="act1500"></td></tr>
+            <tr><td>2000</td><td id="prpkg2000"></td><td id="kp2000"></td><td id="ac2000"></td><td id="act2000"></td></tr>
           </tbody>
         </table>
       </div>
