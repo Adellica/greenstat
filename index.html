@@ -83,6 +83,15 @@
              background-color: #ffffff80;
              padding: 4px;
          }
+         .place , .distance {
+             width: 230px;
+             font-family: mono;
+             font-size: 8pt;
+         }
+         .distance {
+             width: 60px;
+             text-align: right;
+         }
         </style>
         <div style="margin-bottom: 10px;">
           <a href="greenstat.no">
@@ -90,28 +99,28 @@
           </a>
         </div>
 
-        <div>A</div>
-        <div>
-          <input type="text" style="width: 128px;" id="pac-A" />
+        <div>A
+          <input type="text" class="place"    id="pac-A" />
+          <span>km:</span>
         </div>
 
-        <div>B</div>
-        <div>
-          <input type="text" style="width: 128px;" id="pac-B" />
+        <div>B
+          <input type="text" class="place"    id="pac-B" />
+          <input type="text" class="distance" id="distanceAB">
         </div>
 
-        <div>AB (km):
-          <div>
-            <input type="text" id="distanceAB">
-          </div>
+        <div>C
+          <input type="text" class="place"    id="pac-C" />
+          <input type="text" class="distance" id="distanceAC">
         </div>
+
         <div>Salgspris (kr H₂)</div>
         <div>
-          <input type="text" style="width: 128px;" id="saleprice" />
+          <input type="text" class="distance" id="saleprice" />
         </div>
         <div>Transkost (kr/km)</div>
         <div>
-          <input type="text" style="width: 128px;" id="transcost" />
+          <input type="text" class="distance" id="transcost" />
         </div>
 
         <table>
@@ -131,6 +140,7 @@
      Saleprice = createFloatInputAtom('saleprice', 20); // NOK H₂
      Transcost = createFloatInputAtom('transcost', 20);
      DistanceAB = createFloatInputAtom('distanceAB', 20);
+     DistanceAC = createFloatInputAtom('distanceAC', 20);
 
      function updateTable() {
          console.log('updating table against',
@@ -162,8 +172,9 @@
 
      function initMap() {
 
-         var A = createAtom(new google.maps.LatLng({lat: 66.818007299, lng: 13.9510917663})); // Glomfjord
-         var B = createAtom(new google.maps.LatLng({lat: 66.988109162, lng: 14.1860961914})); // Bodø lufthavn
+         var A = createAtom(new google.maps.LatLng({lat: 66.8180072, lng: 13.95109176})); // Glomfjord
+         var B = createAtom(new google.maps.LatLng({lat: 66.9881091, lng: 14.18609619})); // Bodø lufthavn
+         var C = createAtom(new google.maps.LatLng({lat: 66.3154486, lng: 14.15313720})); // Flostrand
 
          var map = new google.maps.Map(document.getElementById('map'), {
              zoom: 7,
@@ -174,56 +185,92 @@
              clickableIcons: false, // remove "landmark" click popup
          });
 
-         var service = new google.maps.DirectionsService;
-         var display = new google.maps.DirectionsRenderer({
-             draggable: true,
-             map: map,
-             preserveViewport: true,
-         });
-         display.addListener('directions_changed', function() {
-             DistanceAB(routeDistance(display.getDirections()));
-             console.log('updating distance AB: ', DistanceAB());
-         });
-
-         redoRoute = function() {
-             service.route({
-                 origin: A(),
-                 destination: B(),
-                 travelMode: 'DRIVING',
-                 avoidTolls: false, // TODO parameterize this
-             }, function(response, status) {
-                 if (status === 'OK') {
-                     console.log('service.route response=', response);
-                     display.setDirections(response);
-                 } else if(status === 'ZERO_RESULTS') {
-                     console.error('no route found between', A(), B());
-                 } else {
-                     console.error('Could not display directions due to ', status);
-                 }
+         var markerAtom = function(Atom, label) {
+             var marker = new google.maps.Marker({
+                 map: map,
+                 draggable: true,
+                 label: label,
+                 position: Atom(),
              });
+             marker.addListener('dragend', function() {
+                 Atom(marker.getPosition());
+             });
+             Atom.listener('marker', function(nv, ov) {
+                 marker.setPosition(Atom());
+             });
+             return marker;
          }
-         A.listener('route', redoRoute);
-         B.listener('route', redoRoute);
+         var markerA = markerAtom(A, 'A');
+         var markerB = markerAtom(B, 'B');
+         var markerC = markerAtom(C, 'C');
+
+         var service = new google.maps.DirectionsService;
+
+         var makeRouter = function(Distance, From, To) {
+             var display = new google.maps.DirectionsRenderer({
+                 draggable: true,
+                 map: map,
+                 preserveViewport: true,
+                 suppressMarkers: true,
+             });
+             display.addListener('directions_changed', function() {
+                 console.log('updating distance: ', Distance(), 'from directions', display.getDirections());
+                 var directions = display.getDirections();
+                 var start = directions.routes[0].legs[0].start_location;
+                 //A(start);
+                 Distance(routeDistance(display.getDirections()));
+             });
+
+             return function() {
+                 service.route({
+                     origin: From(),
+                     destination: To(),
+                     travelMode: 'DRIVING',
+                     avoidTolls: false, // TODO parameterize this
+                 }, function(response, status) {
+                     if (status === 'OK') {
+                         //console.log('service.route response=', response);
+                         display.setDirections(response);
+                     } else if(status === 'ZERO_RESULTS') {
+                         console.error('no route found between', From(), To());
+                     } else {
+                         console.error('Could not display directions due to ', status);
+                     }
+                 });
+             };
+         }
+         var routeAB = makeRouter(DistanceAB, A, B);
+         var routeAC = makeRouter(DistanceAC, A, C);
+         C.listener('routeAC', routeAC);
+         B.listener('routeAB', routeAB);
+         A.listener('routeAB', routeAB);
+         A.listener('routeAC', routeAC);
 
          var createAutocomplete = function(id, Atom) {
              var pac = document.getElementById(id);
              var autocomplete = new google.maps.places.Autocomplete(pac);
              autocomplete.addListener('place_changed', function() {
                  var place = autocomplete.getPlace();
-                 if(place.geometry.location) {
+                 if(place && place.geometry && place.geometry.location) {
                      Atom(place.geometry.location);
+                 } else {
+                     console.error('no geometry.location for', place);
                  }
+             });
+             Atom.listener('#' + id, function(nv, ov) {
+                 // document.getElementById(id).value = nv;
              });
          };
          createAutocomplete('pac-A', A);
          createAutocomplete('pac-B', B);
+         createAutocomplete('pac-C', C);
 
          // export for poor man's repl
          window.map = map;
          window.A = A;
          window.B = B;
+         window.C = C;
          window.service = service;
-         window.display = display;
      }
 
     </script>
