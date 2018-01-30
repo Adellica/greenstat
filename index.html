@@ -89,6 +89,17 @@
             <img src="greenstat-hvit.png"  />
           </a>
         </div>
+
+        <div>Fra</div>
+        <div>
+          <input type="text" style="width: 128px;" id="pac-from" />
+        </div>
+
+        <div>Til</div>
+        <div>
+          <input type="text" style="width: 128px;" id="pac-to" />
+        </div>
+
         <div>Transkost (kr/km)</div>
         <div>
           <input type="text" style="width: 128px;" id="transcost" />
@@ -180,6 +191,19 @@
          Origin.listener('route', redoRoute);
          Dest.listener('route', redoRoute);
 
+         var createAutocomplete = function(id, Atom) {
+             var pac = document.getElementById(id);
+             var autocomplete = new google.maps.places.Autocomplete(pac);
+             autocomplete.addListener('place_changed', function() {
+                 var place = autocomplete.getPlace();
+                 if(place.geometry.location) {
+                     Atom(place.geometry.location);
+                 }
+             });
+         };
+         createAutocomplete('pac-from', Origin);
+         createAutocomplete('pac-to',   Dest);
+
          // export for poor man's repl
          window.map = map;
          window.Origin = Origin;
@@ -190,7 +214,7 @@
 
     </script>
     <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCc4r-qzNh9XGAOCrljj2sZokV8G3Y1naA&callback=initMap">
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCc4r-qzNh9XGAOCrljj2sZokV8G3Y1naA&callback=initMap&libraries=places">
     </script>
   </body>
 </html>
