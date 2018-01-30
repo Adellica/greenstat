@@ -159,10 +159,10 @@
 
     <script>
 
-     Saleprice = createFloatInputAtom('saleprice', 20); // NOK H₂
-     Transcost = createFloatInputAtom('transcost', 20);
-     DistanceAB = createIntegerInputAtom('distanceAB', 20);
-     DistanceAC = createIntegerInputAtom('distanceAC', 20);
+     Saleprice = createFloatInputAtom('saleprice', 1000); // NOK H₂
+     Transcost = createFloatInputAtom('transcost', 20); // NOK/km
+     DistanceAB = createIntegerInputAtom('distanceAB', 20); // km
+     DistanceAC = createIntegerInputAtom('distanceAC', 20); // km
 
      function updateTable() {
          console.log('updating table against',
