@@ -59,8 +59,8 @@
          };
      };
 
-     var createFloatInputAtom = createInputAtomCreator(null, parseFloat);
-     var createIntegerInputAtom = createInputAtomCreator(null, parseInt);
+     var createFloatInputAtom = createInputAtomCreator(parseFloat, parseFloat);
+     var createIntegerInputAtom = createInputAtomCreator(parseInt, parseInt);
 
 
      // helper for directions
