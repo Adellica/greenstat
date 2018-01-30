@@ -137,12 +137,12 @@
 
      function initMap() {
 
-         var origin = new google.maps.LatLng({lat: 66.818007299, lng: 13.9510917663}); // Glomfjord
-         var dest   = new google.maps.LatLng({lat: 66.988109162, lng: 14.1860961914}); // Bodø lufthavn
+         var Origin = createAtom(new google.maps.LatLng({lat: 66.818007299, lng: 13.9510917663})); // Glomfjord
+         var Dest   = createAtom(new google.maps.LatLng({lat: 66.988109162, lng: 14.1860961914})); // Bodø lufthavn
 
          var map = new google.maps.Map(document.getElementById('map'), {
              zoom: 7,
-             center: origin,
+             center: Origin(),
              mapTypeId: 'roadmap',
              scaleControl: true,
              mapTypeControl: false, // leave room for our map-overlay
@@ -159,10 +159,11 @@
              Distance(routeDistance(display.getDirections()));
              console.log('updating distance: ', Distance());
          });
-         function doRoute(origin, dest) {
+
+         redoRoute = function() {
              service.route({
-                 origin: origin,
-                 destination: dest,
+                 origin: Origin(),
+                 destination: Dest(),
                  travelMode: 'DRIVING',
                  avoidTolls: false, // TODO parameterize this
              }, function(response, status) {
@@ -170,18 +171,19 @@
                      console.log(response);
                      display.setDirections(response);
                  } else if(status === 'ZERO_RESULTS') {
-                     console.error('no route found between', origin, dest);
+                     console.error('no route found between', Origin(), Dest());
                  } else {
                      console.error('Could not display directions due to ', status);
                  }
              });
          }
-         doRoute(origin, dest);
+         Origin.listener('route', redoRoute);
+         Dest.listener('route', redoRoute);
 
          // export for poor man's repl
          window.map = map;
-         window.origin = origin;
-         window.dest = dest;
+         window.Origin = Origin;
+         window.Dest = Dest;
          window.service = service;
          window.display = display;
      }
