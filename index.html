@@ -19,6 +19,9 @@
          var getset = function (newValue) {
              if(typeof newValue !== 'undefined') {
                  var oldValue = value;
+                 if(oldValue == newValue) {
+                     return; // avoid unecessary listener calls
+                 }
                  value = newValue;
                  for(var key in listeners) {
                      (listeners[key])(newValue, oldValue);
