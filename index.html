@@ -36,24 +36,31 @@
          return getset;
      };
 
-     var createFloatInputAtom = function(id, value) {
-         var Atom = createAtom(value);
-         Atom.listener('#' + id, function(nv, ov) {
-             var el = document.getElementById(id);
-             if(el) {
-                 el.value = nv;
-             }
-             else {
-                 console.error('cannot find element', id);
-             }
-         });
-         document.getElementById(id).addEventListener('change', function(evt) {
-             if(evt && evt.target) {
-                 Atom(parseFloat(evt.target.value));
-             }
-         });
-         return Atom;
+     var createInputAtomCreator = function(value2atom, atom2value) {
+         return function(id, value) {
+             value2atom = value2atom || function(x) { return x;};
+             atom2value = atom2value || function(x) { return x;};
+             var Atom = createAtom(value);
+             Atom.listener('#' + id, function(nv, ov) {
+                 var el = document.getElementById(id);
+                 if(el) {
+                     el.value = atom2value(nv);
+                 }
+                 else {
+                     console.error('cannot find element', id);
+                 }
+             });
+             document.getElementById(id).addEventListener('change', function(evt) {
+                 if(evt && evt.target) {
+                     Atom(value2atom(evt.target.value));
+                 }
+             });
+             return Atom;
+         };
      };
+
+     var createFloatInputAtom = createInputAtomCreator(null, parseFloat);
+     var createIntegerInputAtom = createInputAtomCreator(null, parseInt);
 
 
      // helper for directions
@@ -89,7 +96,7 @@
              font-size: 8pt;
          }
          .distance {
-             width: 60px;
+             width: 40px;
              text-align: right;
          }
         </style>
@@ -139,8 +146,8 @@
 
      Saleprice = createFloatInputAtom('saleprice', 20); // NOK H₂
      Transcost = createFloatInputAtom('transcost', 20);
-     DistanceAB = createFloatInputAtom('distanceAB', 20);
-     DistanceAC = createFloatInputAtom('distanceAC', 20);
+     DistanceAB = createIntegerInputAtom('distanceAB', 20);
+     DistanceAC = createIntegerInputAtom('distanceAC', 20);
 
      function updateTable() {
          console.log('updating table against',
