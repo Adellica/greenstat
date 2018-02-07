@@ -287,6 +287,14 @@
          createAutocomplete('pac-B', B);
          createAutocomplete('pac-C', C);
 
+         // ====================
+         var kmlLayer = new google.maps.KmlLayer({
+             map: map,
+             // can't get localhost:8080 working here:
+             url: 'https://adellica.github.io/greenstat/hydrogen.kmz',
+         });
+         console.log('kml:', kmlLayer);
+
          // export for poor man's repl
          window.map = map;
          window.A = A;
