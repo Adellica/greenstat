@@ -138,7 +138,7 @@
 
         <div>Salgspris (kr H₂)</div>
         <div>
-          <input type="text" class="distance" id="saleprice">
+          <input type="text" class="distance" id="prodprice">
         </div>
         <div>Transkost (kr/km)</div>
         <div>
@@ -159,7 +159,7 @@
 
     <script>
 
-     Saleprice = createFloatInputAtom('saleprice', 1000); // NOK H₂
+     Prodprice = createFloatInputAtom('prodprice', 40); // NOK H₂
      Transcost = createFloatInputAtom('transcost', 20); // NOK/km
      DistanceAB = createIntegerInputAtom('distanceAB', 20); // km
      DistanceAC = createIntegerInputAtom('distanceAC', 20); // km
@@ -180,13 +180,13 @@
              }
 
              label('prpkg' + dist, (((Transcost() * DistanceAB()) / dist) +           0).toFixed(2));
-             label('kp'    + dist, (((Transcost() * DistanceAB()) / dist) + Saleprice()).toFixed(2));
+             label('kp'    + dist, (((Transcost() * DistanceAB()) / dist) + Prodprice()).toFixed(2));
              label('ac'    + dist, (((Transcost() * DistanceAC()) / dist) +           0).toFixed(2));
-             label('act'   + dist, (((Transcost() * DistanceAC()) / dist) + Saleprice()).toFixed(2));
+             label('act'   + dist, (((Transcost() * DistanceAC()) / dist) + Prodprice()).toFixed(2));
          });
      }
 
-     Saleprice.listener('table', updateTable);
+     Prodprice.listener('table', updateTable);
      Transcost.listener('table', updateTable);
      DistanceAB.listener('table', updateTable);
      DistanceAC.listener('table', updateTable);
