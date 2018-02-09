@@ -149,12 +149,18 @@
                 <td><input type="text" class="distance" id="transcost"></td>
                 <td>kr/km</td>
               </tr>
+              <tr>
+                <td>Påslag</td>
+                <td>𝓍 =</td>
+                <td><input type="text" class="distance" id="provision"></td>
+                <td>%</td>
+              </tr>
           </tbody>
         </table>
 
         <table class="costs">
           <tbody>
-            <tr><th>Last 𝓛</th><th>𝑻⋅AB/𝓛 + 𝑷</th><th>𝑻⋅AC/𝓛 + 𝑷</th></tr>
+            <tr><th>Last 𝓛</th><th>𝑻⋅AB/𝓛 + 𝑷 + 𝓍%</th><th>𝑻⋅AC/𝓛 + 𝑷 + 𝓍%</th></tr>
             <tr><th>kg</th><th>kr/kg</th><th>kr/kg</th></tr>
             <tr><td> 500</td><td id="tablp500" ></td><td id="taclp500" ></td></tr>
             <tr><td>1000</td><td id="tablp1000"></td><td id="taclp1000"></td></tr>
@@ -169,6 +175,7 @@
 
      Prodprice = createFloatInputAtom('prodprice', 40); // NOK H₂
      Transcost = createFloatInputAtom('transcost', 20); // NOK/km
+     Provision = createFloatInputAtom('provision',  0); // %
      DistanceAB = createIntegerInputAtom('distanceAB', 20); // km
      DistanceAC = createIntegerInputAtom('distanceAC', 20); // km
 
@@ -188,7 +195,9 @@
              }
 
              f = function(distance) {
-                 return (((Transcost() * distance) / dist) + Prodprice()).toFixed(2);
+                 return ((((Transcost() * distance) / dist) + Prodprice())
+                     * ((Provision() / 100) + 1))
+                     .toFixed(2);
              }
              label('tablp' + dist, f(DistanceAB()));
              label('taclp' + dist, f(DistanceAC()));
@@ -197,6 +206,7 @@
 
      Prodprice.listener('table', updateTable);
      Transcost.listener('table', updateTable);
+     Provision.listener('table', updateTable);
      DistanceAB.listener('table', updateTable);
      DistanceAC.listener('table', updateTable);
      updateTable();
