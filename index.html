@@ -290,6 +290,7 @@
          // ====================
          var kmlLayer = new google.maps.KmlLayer({
              map: map,
+             preserveViewport: true,
              // can't get localhost:8080 working here:
              url: 'https://adellica.github.io/greenstat/hydrogen.kmz',
          });
