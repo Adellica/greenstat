@@ -135,23 +135,31 @@
               </tr>
           </tbody>
         </table>
+        <table>
+          <tbody>
+              <tr>
+                <td>Produksjonspris</td>
+                <td>𝑷 =</td>
+                <td><input type="text" class="distance" id="prodprice"></td>
+                <td>kr/kg H₂</td>
+              </tr>
 
-        <div>Salgspris (kr H₂)</div>
-        <div>
-          <input type="text" class="distance" id="prodprice">
-        </div>
-        <div>Transkost (kr/km)</div>
-        <div>
-          <input type="text" class="distance" id="transcost">
-        </div>
+              <tr><td>Transportpris</td>
+                <td>𝑻 =</td>
+                <td><input type="text" class="distance" id="transcost"></td>
+                <td>kr/km</td>
+              </tr>
+          </tbody>
+        </table>
 
         <table class="costs">
           <tbody>
-            <tr><th>Last</th><th>AB kr/kg</th>          <th>+SP</th>  <th>AC kr/kg</th> <th>+SP</th></tr>
-            <tr><td> 500</td><td id="prpkg500" ></td><td id="kp500" ></td><td id="ac500" ></td><td id="act500" ></td></tr>
-            <tr><td>1000</td><td id="prpkg1000"></td><td id="kp1000"></td><td id="ac1000"></td><td id="act1000"></td></tr>
-            <tr><td>1500</td><td id="prpkg1500"></td><td id="kp1500"></td><td id="ac1500"></td><td id="act1500"></td></tr>
-            <tr><td>2000</td><td id="prpkg2000"></td><td id="kp2000"></td><td id="ac2000"></td><td id="act2000"></td></tr>
+            <tr><th>Last 𝓛</th><th>𝑻⋅AB/𝓛 + 𝑷</th><th>𝑻⋅AC/𝓛 + 𝑷</th></tr>
+            <tr><th>kg</th><th>kr/kg</th><th>kr/kg</th></tr>
+            <tr><td> 500</td><td id="tablp500" ></td><td id="taclp500" ></td></tr>
+            <tr><td>1000</td><td id="tablp1000"></td><td id="taclp1000"></td></tr>
+            <tr><td>1500</td><td id="tablp1500"></td><td id="taclp1500"></td></tr>
+            <tr><td>2000</td><td id="tablp2000"></td><td id="taclp2000"></td></tr>
           </tbody>
         </table>
       </div>
@@ -179,10 +187,11 @@
                  }
              }
 
-             label('prpkg' + dist, (((Transcost() * DistanceAB()) / dist) +           0).toFixed(2));
-             label('kp'    + dist, (((Transcost() * DistanceAB()) / dist) + Prodprice()).toFixed(2));
-             label('ac'    + dist, (((Transcost() * DistanceAC()) / dist) +           0).toFixed(2));
-             label('act'   + dist, (((Transcost() * DistanceAC()) / dist) + Prodprice()).toFixed(2));
+             f = function(distance) {
+                 return (((Transcost() * distance) / dist) + Prodprice()).toFixed(2);
+             }
+             label('tablp' + dist, f(DistanceAB()));
+             label('taclp' + dist, f(DistanceAC()));
          });
      }
 
