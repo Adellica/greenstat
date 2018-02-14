@@ -62,6 +62,16 @@
      var createFloatInputAtom = createInputAtomCreator(parseFloat, parseFloat);
      var createIntegerInputAtom = createInputAtomCreator(parseInt, parseInt);
 
+     var ls_saver = function(key) {
+         return function(nv, ov) {
+             localStorage.setItem(key, nv);
+         };
+     };
+     var ls_load = function(key, value) {
+         var item = localStorage.getItem(key, value);
+         if(item === null) return value;
+         return item;
+     }
 
      // helper for directions
      // result from service.route(...);
@@ -177,11 +187,16 @@
 
     <script>
 
-     Prodprice = createFloatInputAtom('prodprice', 40); // NOK H₂
-     Transcost = createFloatInputAtom('transcost', 20); // NOK/km
-     Provision = createFloatInputAtom('provision',  0); // %
+     Prodprice = createFloatInputAtom('prodprice', ls_load('prodprice', 40)); // NOK H₂
+     Transcost = createFloatInputAtom('transcost', ls_load('transcost', 20)); // NOK/km
+     Provision = createFloatInputAtom('provision', ls_load('provision',  0)); // %
      DistanceAB = createIntegerInputAtom('distanceAB', 20); // km
      DistanceAC = createIntegerInputAtom('distanceAC', 20); // km
+
+     Prodprice.listener('ls.prodprice', ls_saver('prodprice'));
+     Transcost.listener('ls.transcost', ls_saver('transcost'));
+     Provision.listener('ls.provision', ls_saver('provision'));
+     // Saving distances doesn't really work because it gets overridden by route
 
      function updateTable() {
          console.log('updating table against',
