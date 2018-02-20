@@ -174,12 +174,12 @@
 
         <table class="costs">
           <tbody>
-            <tr><th>Last 𝓛</th><th>Salgspris AB</th><th>Salgspris AC</th></tr>
-            <tr><th>kg</th><th>kr/kg</th><th>kr/kg</th></tr>
-            <tr><td> 100</td><td id="tablp100" ></td><td id="taclp100" ></td></tr>
-            <tr><td> 300</td><td id="tablp300" ></td><td id="taclp300"></td></tr>
-            <tr><td> 500</td><td id="tablp500" ></td><td id="taclp500"></td></tr>
-            <tr><td>1500</td><td id="tablp1500"></td><td id="taclp1500"></td></tr>
+            <tr><th>Last 𝓛</th><th>Transportpris AB</th><th>Salgspris AB</th><th>Transportpris AC</th><th>Salgspris AC</th></tr>
+            <tr><th>kg</th><th>kr/kg</th><th>kr/kg</th><th>kr/kg</th><th>kr/kg</th></tr>
+            <tr><td> 100</td><td id="tab100" ></td><td id="tablp100" ><td id="tac100" ></td></td><td id="taclp100" ></td></tr>
+            <tr><td> 300</td><td id="tab300" ></td><td id="tablp300" ><td id="tac300" ></td></td><td id="taclp300" ></td></tr>
+            <tr><td> 500</td><td id="tab500" ></td><td id="tablp500" ><td id="tac500" ></td></td><td id="taclp500" ></td></tr>
+            <tr><td>1500</td><td id="tab1500"></td><td id="tablp1500"><td id="tac1500"></td></td><td id="taclp1500"></td></tr>
           </tbody>
         </table>
       </div>
@@ -213,11 +213,18 @@
                  }
              }
 
-             f = function(distance) {
+             t = function(distance) { // transport cost
+                 return (((Transcost() * distance) / load))
+                     .toFixed(2);
+             }
+             f = function(distance) { // full cost + provision
                  return ((((Transcost() * distance) / load) + Prodprice())
                      * ((Provision() / 100) + 1))
                      .toFixed(2);
              }
+             label('tab' + load, t(DistanceAB()));
+             label('tac' + load, t(DistanceAC()));
+
              label('tablp' + load, f(DistanceAB()));
              label('taclp' + load, f(DistanceAC()));
          });
